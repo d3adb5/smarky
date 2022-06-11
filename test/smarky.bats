@@ -11,6 +11,12 @@ setup() {
   PATH="$rootDir:$PATH"
 }
 
-@test "can run our script" {
-  smarky
+@test "outputs usage information when run without args" {
+  run smarky
+  assert_output --partial "Usage information:"
+}
+
+@test "outputs usage information when run with unknown command" {
+  run smarky command-that-will-never-exist
+  assert_output --partial "Usage information:"
 }

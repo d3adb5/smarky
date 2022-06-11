@@ -3,7 +3,11 @@
 indexFile="${SMARKY_INDEX:-${XDG_DATA_HOME:-$HOME/.local/share}/smarky-index}"
 
 usage() {
-  echo "NOT IMPLEMENTED" >&2
+  echo "Usage information:"
+  echo "  smarky create [command] [description] -- add a command to the index"
+  echo "  smarky remove [index|description] ------ remove command from index"
+  echo "  smarky list ---------------------------- list all added commands"
+  echo "  smarky [help|usage|etc.] --------------- display usage information"
 }
 
 create() {
@@ -19,7 +23,12 @@ list() {
 }
 
 main() {
-  echo "NOT IMPLEMENTED" >&2
+  case "$1" in
+    create|add) shift; create "$@" ;;
+    remove|del) shift; remove "$@" ;;
+    list|show)  shift; list "$@" ;;
+    *) usage
+  esac
 }
 
 main "$@"
