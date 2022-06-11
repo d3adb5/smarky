@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request: {}
+  push:
+    branches: [ master ]
+
+jobs:
+  bats:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout files in the repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install sqlite3
+        run: sudo apt-get install sqlite3
+
+      - name: Run tests with BATS
+        run: ./test/bats/bin/bats ./test/smarky.bats
