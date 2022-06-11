@@ -31,13 +31,31 @@ teardown() {
 
 @test "commands table is updated when creating bookmarks" {
   run smarky create "cat"
+
   r="$(sqlite3 "$SMARKY_INDEX" "select * from commands where command = 'cat';")"
   assert [ -n "$r" ]
+
+  run smarky select 1
+  assert_output "cat"
 }
 
 @test "commands have special symbols preserved" {
   specialCommand="I'm a special!! cőmmand テスト \" \"\" blah ()% %% %%% \$\$\$"
   run smarky create "$specialCommand"
+
   raw="$(sqlite3 "$SMARKY_INDEX" "select command from commands where id = 1;")"
   assert [ "$raw" = "$specialCommand" ]
+
+  run smarky select 1
+  assert_output "$specialCommand"
+}
+
+@test "usage information is shown if select gets no args" {
+  run smarky select
+  assert_output --partial "Usage information:"
+}
+
+@test "no output is given when id isn't found" {
+  run smarky select 123
+  refute_output
 }

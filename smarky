@@ -16,6 +16,7 @@ usage() {
   echo "Usage information:"
   echo "  smarky create [command] [description] -- add a command to the index"
   echo "  smarky remove [index|description] ------ remove command from index"
+  echo "  smarky select id ----------------------- get command by id"
   echo "  smarky list ---------------------------- list all added commands"
   echo "  smarky [help|usage|etc.] --------------- display usage information"
 }
@@ -41,6 +42,11 @@ remove() {
   echo "NOT IMPLEMENTED" >&2
 }
 
+select() {
+  [ "$#" -lt 1 ] && (usage && exit 1)
+  sqlite3 "$indexFile" "select command from commands where id = $1;"
+}
+
 list() {
   echo "NOT IMPLEMENTED" >&2
 }
@@ -50,6 +56,7 @@ main() {
   case "$1" in
     create|add) shift; create "$@" ;;
     remove|del) shift; remove "$@" ;;
+    select|get) shift; select "$@" ;;
     list|show)  shift; list "$@" ;;
     *) usage
   esac
