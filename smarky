@@ -48,7 +48,10 @@ select() {
 }
 
 list() {
-  echo "NOT IMPLEMENTED" >&2
+  sqlite3 -column -noheader "$indexFile" "
+    select
+      id, replace(description, CHAR(10), '  '), replace(command, CHAR(10), '  ')
+    from commands;"
 }
 
 main() {

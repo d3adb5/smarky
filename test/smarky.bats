@@ -59,3 +59,15 @@ teardown() {
   run smarky select 123
   refute_output
 }
+
+@test "created bookmarks show in the bookmarks list" {
+  commandOne="tar xvzf" commandOneDesc="extract tarball verbosely"
+  commandTwo="rsync -a" commandTwoDesc="archive sync with rsync"
+
+  run smarky create "$commandOne" "$commandOneDesc"
+  run smarky create "$commandTwo" "$commandTwoDesc"
+
+  run smarky list
+  assert_output --partial "$commandOneDesc"
+  assert_output --partial "$commandTwoDesc"
+}
