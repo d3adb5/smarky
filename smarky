@@ -1,0 +1,25 @@
+#!/bin/sh
+
+indexFile="${SMARKY_INDEX:-${XDG_DATA_HOME:-$HOME/.local/share}/smarky-index}"
+
+usage() {
+  echo "NOT IMPLEMENTED" >&2
+}
+
+create() {
+  echo "NOT IMPLEMENTED" >&2
+}
+
+remove() {
+  echo "NOT IMPLEMENTED" >&2
+}
+
+list() {
+  echo "NOT IMPLEMENTED" >&2
+}
+
+main() {
+  echo "NOT IMPLEMENTED" >&2
+}
+
+main "$@"
