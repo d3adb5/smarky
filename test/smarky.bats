@@ -71,3 +71,21 @@ teardown() {
   assert_output --partial "$commandOneDesc"
   assert_output --partial "$commandTwoDesc"
 }
+
+@test "removed command disappears from list" {
+  commandOne="tar xvzf" commandOneDesc="extract tarball verbosely"
+  commandTwo="rsync -a" commandTwoDesc="archive sync with rsync"
+
+  run smarky create "$commandOne" "$commandOneDesc"
+  run smarky create "$commandTwo" "$commandTwoDesc"
+  run smarky remove 1
+
+  run smarky list
+  refute_output --partial "$commandOneDesc"
+  assert_output --partial "$commandTwoDesc"
+}
+
+@test "removing nonexistent command gives no error or error message" {
+  run smarky remove 1234432
+  refute_output
+}

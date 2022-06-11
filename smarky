@@ -15,7 +15,7 @@ initDatabase() {
 usage() {
   echo "Usage information:"
   echo "  smarky create [command] [description] -- add a command to the index"
-  echo "  smarky remove [index|description] ------ remove command from index"
+  echo "  smarky remove id ----------------------- remove command by id"
   echo "  smarky select id ----------------------- get command by id"
   echo "  smarky list ---------------------------- list all added commands"
   echo "  smarky [help|usage|etc.] --------------- display usage information"
@@ -39,7 +39,8 @@ create() {
 }
 
 remove() {
-  echo "NOT IMPLEMENTED" >&2
+  [ "$#" -lt 1 ] && (usage && exit 2)
+  sqlite3 "$indexFile" "delete from commands where id = $1;"
 }
 
 select() {
