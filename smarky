@@ -14,7 +14,7 @@ initDatabase() {
 
 usage() {
   echo "Usage information:"
-  echo "  smarky create [command] [description] -- add a command to the index"
+  echo "  smarky create [description] [command] -- add a command to the index"
   echo "  smarky remove id ----------------------- remove command by id"
   echo "  smarky select id ----------------------- get command by id"
   echo "  smarky list ---------------------------- list all added commands"
@@ -22,9 +22,9 @@ usage() {
 }
 
 create() {
-  commandLine="$1" commandDescription="$2" tmpFile="$(mktemp)"
+  commandDescription="$1" commandLine="$2" tmpFile="$(mktemp)"
 
-  if [ "$#" -lt 1 ]; then
+  if [ "$#" -lt 2 ]; then
     ${EDITOR:-nano} "$tmpFile"
     commandLine="$(cat "$tmpFile")"
   fi

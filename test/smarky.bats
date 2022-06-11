@@ -30,7 +30,7 @@ teardown() {
 }
 
 @test "commands table is updated when creating bookmarks" {
-  run smarky create "cat"
+  run smarky create "a simple cat" "cat"
 
   r="$(sqlite3 "$SMARKY_INDEX" "select * from commands where command = 'cat';")"
   assert [ -n "$r" ]
@@ -41,7 +41,7 @@ teardown() {
 
 @test "commands have special symbols preserved" {
   specialCommand="I'm a special!! cőmmand テスト \" \"\" blah ()% %% %%% \$\$\$"
-  run smarky create "$specialCommand"
+  run smarky create "$specialCommand" "$specialCommand"
 
   raw="$(sqlite3 "$SMARKY_INDEX" "select command from commands where id = 1;")"
   assert [ "$raw" = "$specialCommand" ]
@@ -64,8 +64,8 @@ teardown() {
   commandOne="tar xvzf" commandOneDesc="extract tarball verbosely"
   commandTwo="rsync -a" commandTwoDesc="archive sync with rsync"
 
-  run smarky create "$commandOne" "$commandOneDesc"
-  run smarky create "$commandTwo" "$commandTwoDesc"
+  run smarky create "$commandOneDesc" "$commandOne"
+  run smarky create "$commandTwoDesc" "$commandTwo"
 
   run smarky list
   assert_output --partial "$commandOneDesc"
@@ -76,8 +76,8 @@ teardown() {
   commandOne="tar xvzf" commandOneDesc="extract tarball verbosely"
   commandTwo="rsync -a" commandTwoDesc="archive sync with rsync"
 
-  run smarky create "$commandOne" "$commandOneDesc"
-  run smarky create "$commandTwo" "$commandTwoDesc"
+  run smarky create "$commandOneDesc" "$commandOne"
+  run smarky create "$commandTwoDesc" "$commandTwo"
   run smarky remove 1
 
   run smarky list
