@@ -1,6 +1,16 @@
 #!/bin/sh
+set -e
 
-indexFile="${SMARKY_INDEX:-${XDG_DATA_HOME:-$HOME/.local/share}/smarky-index}"
+indexFile="${SMARKY_INDEX:-${XDG_DATA_HOME:-$HOME/.local/share}/smarky-index.db}"
+
+initDatabase() {
+  sqlite3 "$indexFile" "
+    create table if not exists commands (
+      id INTEGER PRIMARY KEY,
+      command TEXT,
+      description TEXT
+    );"
+}
 
 usage() {
   echo "Usage information:"
@@ -23,6 +33,7 @@ list() {
 }
 
 main() {
+  initDatabase
   case "$1" in
     create|add) shift; create "$@" ;;
     remove|del) shift; remove "$@" ;;
