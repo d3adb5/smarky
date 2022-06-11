@@ -21,7 +21,20 @@ usage() {
 }
 
 create() {
-  echo "NOT IMPLEMENTED" >&2
+  commandLine="$1" commandDescription="$2" tmpFile="$(mktemp)"
+
+  if [ "$#" -lt 1 ]; then
+    ${EDITOR:-nano} "$tmpFile"
+    commandLine="$(cat "$tmpFile")"
+  fi
+
+  sqlite3 "$indexFile" "
+    insert into commands (command, description) values (
+      '$(echo "$commandLine" | sed "s/'/''/g")',
+      '$(echo "$commandDescription" | sed "s/'/''/g")'
+    );"
+
+  rm "$tmpFile"
 }
 
 remove() {

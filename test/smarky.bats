@@ -5,10 +5,13 @@ setup() {
   load 'helper/bats-assert/load'
 
   export SMARKY_INDEX="${BATS_TMPDIR}/smarky-index.db"
-  rm -f "$SMARKY_INDEX"
 
   rootDir="$(cd "$(dirname "$BATS_TEST_FILENAME")" && pwd)/.."
   PATH="$rootDir:$PATH"
+}
+
+teardown() {
+  rm -f "$SMARKY_INDEX"
 }
 
 @test "outputs usage information when run without args" {
@@ -24,4 +27,17 @@ setup() {
 @test "index file is created when running the script" {
   run smarky
   assert [ -e "$SMARKY_INDEX" ]
+}
+
+@test "commands table is updated when creating bookmarks" {
+  run smarky create "cat"
+  r="$(sqlite3 "$SMARKY_INDEX" "select * from commands where command = 'cat';")"
+  assert [ -n "$r" ]
+}
+
+@test "commands have special symbols preserved" {
+  specialCommand="I'm a special!! cőmmand テスト \" \"\" blah ()% %% %%% \$\$\$"
+  run smarky create "$specialCommand"
+  raw="$(sqlite3 "$SMARKY_INDEX" "select command from commands where id = 1;")"
+  assert [ "$raw" = "$specialCommand" ]
 }
