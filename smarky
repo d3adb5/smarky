@@ -49,10 +49,11 @@ get() {
 }
 
 list() {
+  [ -t 1 ] && filter="cut -c -$(stty size | cut -d' ' -f2)" || filter="cat -"
   sqlite3 -column -noheader "$indexFile" "
     select
       id, replace(description, CHAR(10), '  '), replace(command, CHAR(10), '  ')
-    from commands;"
+    from commands;" | $filter
 }
 
 main() {
