@@ -7,7 +7,7 @@ on:
 
 jobs:
   bats:
-    name: Test
+    name: BATS
     runs-on: ubuntu-latest
 
     steps:
@@ -21,3 +21,17 @@ jobs:
 
       - name: Run tests with BATS
         run: ./test/bats/bin/bats ./test/smarky.bats
+
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout files in the repository
+        uses: actions/checkout@v3
+
+      - name: Analyze files with ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          ignore_paths: zsh
+          severity: warning
