@@ -1,9 +1,14 @@
 fzf-smarky-pick-command() {
   setopt localoptions noglobsubst noposixbuiltins pipefail 2>/dev/null
-  local previewcmd="smarky select \$(cut -d' ' -f1 <<< {})"
-  local command="$(smarky list | fzf --height 40% --tiebreak=index \
+  local selected previewcmd="smarky select \$(cut -d' ' -f1 <<< {})"
+
+  type bat >/dev/null 2>&1 && \
+    previewcmd="bat -l sh --color always --decorations never <($previewcmd)"
+
+  selected="$(smarky list | fzf --height 40% --tiebreak=index \
     --preview "$previewcmd" | cut -d' ' -f1 | xargs -r smarky select)"
-  LBUFFER="$command"
+
+  LBUFFER="$selected"
   zle reset-prompt
 }
 
