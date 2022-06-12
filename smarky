@@ -43,7 +43,7 @@ remove() {
   sqlite3 "$indexFile" "delete from commands where id = $1;"
 }
 
-select() {
+get() {
   [ "$#" -lt 1 ] && (usage && exit 1)
   sqlite3 "$indexFile" "select command from commands where id = $1;"
 }
@@ -60,7 +60,7 @@ main() {
   case "$1" in
     create|add) shift; create "$@" ;;
     remove|del) shift; remove "$@" ;;
-    select|get) shift; select "$@" ;;
+    select|get) shift; get "$@" ;;
     list|show)  shift; list "$@" ;;
     *) usage
   esac
