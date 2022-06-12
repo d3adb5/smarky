@@ -63,6 +63,7 @@ update() {
   [ "$#" -lt 1 ] && (usage && exit 3)
 
   if [ "$#" -lt 3 ]; then
+    get "$markId" > "$tmpFile"
     ${EDITOR:-nano} "$tmpFile"
     cmdline="$(cat "$tmpFile")"
   fi
