@@ -89,3 +89,38 @@ teardown() {
   run smarky remove 1234432
   refute_output
 }
+
+@test "commands can be updated after first created" {
+  run smarky create "a simple cat" "cat"
+  run smarky select 1
+  assert_output "cat"
+
+  run smarky update 1 "a simple bat" "bat"
+  run smarky select 1
+
+  refute_output --partial "cat"
+  assert_output --partial "bat"
+}
+
+@test "updating a command that doesn't exist does nothing" {
+  run smarky create "example" "example"
+  listOutput="$(smarky list)"
+
+  run smarky update 1234 "example" "example"
+  refute_output
+
+  run smarky list
+  assert_output "$listOutput"
+}
+
+@test "update command doesn't change description if no args are given" {
+  run smarky create "example" "command"
+  EDITOR="echo" run smarky update 1
+  run smarky list
+  assert_output --partial "example"
+}
+
+@test "update command outputs usage information when given no args" {
+  run smarky update
+  assert_output --partial "Usage information:"
+}

@@ -14,11 +14,12 @@ initDatabase() {
 
 usage() {
   echo "Usage information:"
-  echo "  smarky create [description] [command] -- add a command to the index"
-  echo "  smarky remove id ----------------------- remove command by id"
-  echo "  smarky select id ----------------------- get command by id"
-  echo "  smarky list ---------------------------- list all added commands"
-  echo "  smarky [help|usage|etc.] --------------- display usage information"
+  echo "  smarky create [description] [command] ----- add a mark to the index"
+  echo "  smarky update id [description] [command] -- edit a mark in the index"
+  echo "  smarky remove id -------------------------- remove command by id"
+  echo "  smarky select id -------------------------- get command by id"
+  echo "  smarky list ------------------------------- list all added commands"
+  echo "  smarky [help|usage|etc.] ------------------ display usage information"
 }
 
 create() {
@@ -56,6 +57,30 @@ list() {
     from commands;" | $filter
 }
 
+update() {
+  markId="$1" description="$2" cmdline="$3" tmpFile="$(mktemp)"
+
+  [ "$#" -lt 1 ] && (usage && exit 3)
+
+  if [ "$#" -lt 3 ]; then
+    ${EDITOR:-nano} "$tmpFile"
+    cmdline="$(cat "$tmpFile")"
+  fi
+
+  if [ -n "$description" ]; then
+    descriptionSet="description = '$(echo "$description" | sed "s/'/''/g")',"
+  fi
+
+  sqlite3 "$indexFile" "
+    update commands
+    set
+      $descriptionSet
+      command = '$(echo "$cmdline" | sed "s/'/''/g")'
+    where id = $markId;"
+
+  rm "$tmpFile"
+}
+
 main() {
   initDatabase
   case "$1" in
@@ -63,6 +88,7 @@ main() {
     remove|del) shift; remove "$@" ;;
     select|get) shift; get "$@" ;;
     list|show)  shift; list "$@" ;;
+    update|set) shift; update "$@" ;;
     *) usage
   esac
 }
