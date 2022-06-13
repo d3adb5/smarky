@@ -97,18 +97,21 @@ teardown() {
   assert_output "cat"
 
   run smarky update 1 "a simple bat" "bat"
+  assert_output "Bookmark ID 1 updated successfully."
+
   run smarky select 1
 
   refute_output --partial "cat"
   assert_output --partial "bat"
 }
 
-@test "updating a command that doesn't exist does nothing" {
+@test "updating a nonexistent bookmark causes a crash, but no changes" {
   run smarky create "example" "example"
   listOutput="$(smarky list)"
 
   run smarky update 1234 "example" "example"
-  refute_output
+  assert_output "Bookmark ID 1234 doesn't exist."
+  assert_failure
 
   run smarky list
   assert_output "$listOutput"

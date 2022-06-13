@@ -59,9 +59,11 @@ list() {
 }
 
 update() {
-  markId="$1" description="$2" cmdline="$3" tmpFile="$(mktemp)"
+  markId="${1:--1}" description="$2" cmdline="$3" tmpFile="$(mktemp)"
+  exists="$(sqlite3 "$indexFile" "select 1 from commands where id = $markId;")"
 
   [ "$#" -lt 1 ] && (usage && exit 3)
+  [ -z "$exists" ] && (echo "Bookmark ID $markId doesn't exist." && exit 4)
 
   if [ "$#" -lt 3 ]; then
     get "$markId" > "$tmpFile"
@@ -81,6 +83,7 @@ update() {
     where id = $markId;"
 
   rm "$tmpFile"
+  echo "Bookmark ID $markId updated successfully."
 }
 
 main() {
