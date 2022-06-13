@@ -52,3 +52,25 @@ widget that'll help you select your bookmark and put it on the command line:
 $ smarky create "extract a gzipped tarball (.tar.gz)" "tar xvzf "
 $ # press Ctrl + J here
 ```
+
+### Index file (SQLite database)
+
+When picking the database file to be used by the `sqlite3` command, smarky has
+the following precedence:
+
+1. The `SMARKY_INDEX` environment variable, if set.
+2. The path `$XDG_DATA_DIR/smarky-index.db`, if `XDG_DATA_DIR` is set.
+3. The path `$HOME/.local/share/smarky-index.db`.
+
+For example, if you wish to use the file `/tmp/example.db` for the smarky
+index, you can invoke smarky like this:
+
+```sh
+SMARKY_INDEX=/tmp/example.db smarky list
+```
+
+### Text editor (and the EDITOR variable)
+
+When creating or updating bookmarks with smarky, smarky will invoke the text
+editor `$EDITOR` for you to compose the command to store in its index. When
+`EDITOR` is not set, smarky will attempt to use `nano`.
