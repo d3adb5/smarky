@@ -31,6 +31,7 @@ teardown() {
 
 @test "commands table is updated when creating bookmarks" {
   run smarky create "a simple cat" "cat"
+  assert_output "Bookmark created successfully: a simple cat"
 
   r="$(sqlite3 "$SMARKY_INDEX" "select * from commands where command = 'cat';")"
   assert [ -n "$r" ]

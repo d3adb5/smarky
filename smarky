@@ -23,20 +23,21 @@ usage() {
 }
 
 create() {
-  commandDescription="$1" commandLine="$2" tmpFile="$(mktemp)"
+  description="$1" cmdline="$2" tmpFile="$(mktemp)"
 
   if [ "$#" -lt 2 ]; then
     ${EDITOR:-nano} "$tmpFile"
-    commandLine="$(cat "$tmpFile")"
+    cmdline="$(cat "$tmpFile")"
   fi
 
   sqlite3 "$indexFile" "
     insert into commands (command, description) values (
-      '$(echo "$commandLine" | sed "s/'/''/g")',
-      '$(echo "$commandDescription" | sed "s/'/''/g")'
+      '$(echo "$cmdline" | sed "s/'/''/g")',
+      '$(echo "$description" | sed "s/'/''/g")'
     );"
 
   rm "$tmpFile"
+  echo "Bookmark created successfully: $description"
 }
 
 remove() {
