@@ -9,6 +9,7 @@ jobs:
   bats:
     name: BATS
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout files in the repository
@@ -25,6 +26,7 @@ jobs:
   shellcheck:
     name: ShellCheck
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout files in the repository
