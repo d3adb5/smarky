@@ -3,6 +3,10 @@ set -e
 
 indexFile="${SMARKY_INDEX:-${XDG_DATA_HOME:-$HOME/.local/share}/smarky-index.db}"
 
+getTmpFile() {
+  mktemp --tmpdir smarky-script-XXXXXXXX.sh
+}
+
 initDatabase() {
   sqlite3 "$indexFile" "
     create table if not exists commands (
@@ -23,7 +27,7 @@ usage() {
 }
 
 create() {
-  description="$1" cmdline="$2" tmpFile="$(mktemp)"
+  description="$1" cmdline="$2" tmpFile="$(getTmpFile)"
 
   if [ "$#" -lt 2 ]; then
     ${EDITOR:-nano} "$tmpFile"
@@ -59,7 +63,7 @@ list() {
 }
 
 update() {
-  markId="${1:--1}" description="$2" cmdline="$3" tmpFile="$(mktemp)"
+  markId="${1:--1}" description="$2" cmdline="$3" tmpFile="$(getTmpFile)"
   exists="$(sqlite3 "$indexFile" "select 1 from commands where id = $markId;")"
 
   [ "$#" -lt 1 ] && (usage && exit 3)
