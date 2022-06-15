@@ -1,0 +1,105 @@
+#!/bin/sh
+set -e
+
+indexFile="${SMARKY_INDEX:-${XDG_DATA_HOME:-$HOME/.local/share}/smarky-index.db}"
+
+getTmpFile() {
+  mktemp --tmpdir smarky-script-XXXXXXXX.sh
+}
+
+initDatabase() {
+  sqlite3 "$indexFile" "
+    create table if not exists commands (
+      id INTEGER PRIMARY KEY,
+      command TEXT,
+      description TEXT
+    );"
+}
+
+usage() {
+  echo "Usage information:"
+  echo "  smarky create [description] [command] ----- add a mark to the index"
+  echo "  smarky update id [description] [command] -- edit a mark in the index"
+  echo "  smarky remove id -------------------------- remove command by id"
+  echo "  smarky select id -------------------------- get command by id"
+  echo "  smarky list ------------------------------- list all added commands"
+  echo "  smarky [help|usage|etc.] ------------------ display usage information"
+}
+
+create() {
+  description="$1" cmdline="$2" tmpFile="$(getTmpFile)"
+
+  if [ "$#" -lt 2 ]; then
+    ${EDITOR:-nano} "$tmpFile"
+    cmdline="$(cat "$tmpFile")"
+  fi
+
+  sqlite3 "$indexFile" "
+    insert into commands (command, description) values (
+      '$(echo "$cmdline" | sed "s/'/''/g")',
+      '$(echo "$description" | sed "s/'/''/g")'
+    );"
+
+  rm "$tmpFile"
+  echo "Bookmark created successfully: $description"
+}
+
+remove() {
+  [ "$#" -lt 1 ] && (usage && exit 2)
+  sqlite3 "$indexFile" "delete from commands where id = $1;"
+}
+
+get() {
+  [ "$#" -lt 1 ] && (usage && exit 1)
+  sqlite3 "$indexFile" "select command from commands where id = $1;"
+}
+
+list() {
+  [ -t 1 ] && filter="cut -c -$(stty size | cut -d' ' -f2)" || filter="cat -"
+  sqlite3 -column -noheader "$indexFile" "
+    select
+      id, replace(description, CHAR(10), '  '), replace(command, CHAR(10), '  ')
+    from commands;" | $filter
+}
+
+update() {
+  markId="${1:--1}" description="$2" cmdline="$3" tmpFile="$(getTmpFile)"
+  exists="$(sqlite3 "$indexFile" "select 1 from commands where id = $markId;")"
+
+  [ "$#" -lt 1 ] && (usage && exit 3)
+  [ -z "$exists" ] && (echo "Bookmark ID $markId doesn't exist." && exit 4)
+
+  if [ "$#" -lt 3 ]; then
+    get "$markId" > "$tmpFile"
+    ${EDITOR:-nano} "$tmpFile"
+    cmdline="$(cat "$tmpFile")"
+  fi
+
+  if [ -n "$description" ]; then
+    descriptionSet="description = '$(echo "$description" | sed "s/'/''/g")',"
+  fi
+
+  sqlite3 "$indexFile" "
+    update commands
+    set
+      $descriptionSet
+      command = '$(echo "$cmdline" | sed "s/'/''/g")'
+    where id = $markId;"
+
+  rm "$tmpFile"
+  echo "Bookmark ID $markId updated successfully."
+}
+
+main() {
+  initDatabase
+  case "$1" in
+    create|add) shift; create "$@" ;;
+    remove|del) shift; remove "$@" ;;
+    select|get) shift; get "$@" ;;
+    list|show)  shift; list "$@" ;;
+    update|set) shift; update "$@" ;;
+    *) usage
+  esac
+}
+
+main "$@"
