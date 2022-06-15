@@ -128,3 +128,16 @@ teardown() {
   run smarky update
   assert_output --partial "Usage information:"
 }
+
+@test "text EDITOR can be used when creating / updating marks" {
+  echo "bananas" > "${BATS_TMPDIR}/tmp-script"
+  export EDITOR="mv ${BATS_TMPDIR}/tmp-script"
+  run smarky create "I like"
+  run smarky list
+  assert_output --regexp '1\s+I like\s+bananas'
+
+  echo "apples" > "${BATS_TMPDIR}/tmp-script"
+  run smarky update 1
+  run smarky list
+  assert_output --regexp '1\s+I like\s+apples'
+}
