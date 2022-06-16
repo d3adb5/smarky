@@ -8,7 +8,7 @@ fzf-smarky-pick-command() {
   selected="$(smarky list | fzf --height 40% --tiebreak=index \
     --preview "$previewcmd" | cut -d' ' -f1 | xargs -r smarky select)"
 
-  LBUFFER="$selected"
+  [ -n "$selected" ] && LBUFFER="$selected"
   zle reset-prompt
 }
 
