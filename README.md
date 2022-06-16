@@ -53,6 +53,23 @@ $ smarky create "extract a gzipped tarball (.tar.gz)" "tar xvzf "
 $ # press Ctrl + J here
 ```
 
+### Templated Bookmarks
+
+On top of just storing your commands, smarky comes with another ZLE widget that
+allows you to jump to the next "template" field. Fields are simply parts of the
+command wrapped in double curly braces, like such:
+
+```sh
+socat {{ protocol }}-listen:{{ port }},fork,reuseaddr {{ protocol }}:{{ remote ip addr }}:{{ port }}
+```
+
+You can store something like this, or text that is even more complicated, place
+it in the command line from smarky by pressing Ctrl + J, then jump to the first
+field with Ctrl + G.
+
+Pressing Ctrl + G again and again will jump to the next field, if one exists.
+You can even take this opportunity to invoke more well-behaved widgets.
+
 ### Index file (SQLite database)
 
 When picking the database file to be used by the `sqlite3` command, smarky has
