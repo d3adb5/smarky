@@ -61,7 +61,10 @@ next, and so on:
 
 ![smarky templated commands](https://user-images.githubusercontent.com/8827351/174421186-028d50ac-8df2-440a-8c4d-a6ccb8a1f4a9.gif)
 
-You can even take this opportunity to invoke more well-behaved widgets.
+After you jump to a field, control reverts back to ZSH itself, so if you have
+widgets for things like getting a Git commit hash, getting the name of a Git
+branch, or things of the sort (including getting another command from smarky),
+you may do so freely.
 
 ### Index file (SQLite database)
 
