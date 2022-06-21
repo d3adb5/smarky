@@ -17,7 +17,6 @@ fzf-smarky-next-field() {
   [ -z "$RBUFFER" ] && CURSOR=0
   local fieldstart='{{' fieldend='}}'
   local subtracted="${RBUFFER#*$fieldstart}" offset
-  echo "$subtracted" > /tmp/subtracted.txt
   offset=$(( ${#RBUFFER} - ${#subtracted} - ${#fieldstart} + $CURSOR ))
   CURSOR=offset; RBUFFER="${RBUFFER#*$fieldend}"
 }
