@@ -15,9 +15,11 @@ fzf-smarky-pick-command() {
 fzf-smarky-next-field() {
   setopt localoptions noglobsubst noposixbuiltins pipefail 2>/dev/null
   [ -z "$RBUFFER" ] && CURSOR=0
-  local subtracted="${RBUFFER#*\{\{}" offset
-  offset=$(( ${#RBUFFER} - ${#subtracted} - 2 + $CURSOR ))
-  CURSOR=offset; RBUFFER="${RBUFFER#*\}\}}"
+  local fieldstart='{{' fieldend='}}'
+  local subtracted="${RBUFFER#*$fieldstart}" offset
+  echo "$subtracted" > /tmp/subtracted.txt
+  offset=$(( ${#RBUFFER} - ${#subtracted} - ${#fieldstart} + $CURSOR ))
+  CURSOR=offset; RBUFFER="${RBUFFER#*$fieldend}"
 }
 
 zle -N fzf-smarky-pick-command
