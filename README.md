@@ -10,15 +10,24 @@ Batteries (ZSH widget) included.
 
 ## Installation
 
-Currently there is no packaged version of smarky, so you'll have to clone the
-repository somewhere and ensure `smarky` is in your `$PATH`:
+If you're on Arch and you're okay with using the AUR, the [smarky-git][aurpkg]
+package puts `smarky` in `/usr/bin` and the Zsh widgets in
+`/usr/share/smarky/widgets`. It's written and maintained by the one person who
+uses it: me, the author.
+
+Alternatively, you can clone the repository somewhere and ensure `smarky` is in
+your `$PATH`:
 
 ```sh
 git clone https://github.com/d3adb5/smarky
 PATH="$PATH:$(pwd)/smarky"
 ```
 
-smarky depends on: `fzf`, `sqlite3`, `bat` (optional)
+smarky depends on `sqlite3`, and optionally on `fzf` and `bat`. `fzf` is
+necessary if you're using the widgets, and `bat` is optionally used for syntax
+highlighting in the preview windows.
+
+[aurpkg]: https://aur.archlinux.org/packages/smarky-git
 
 ## Usage
 
